@@ -1,6 +1,6 @@
 # Messaging a teammate's agents
 
-> Published from InternSwarm's code repository, which is not public yet, at 4513fb35. Anything about building from source applies there.
+> Published from InternSwarm's code repository, which is not public yet, at 0e2bb50d. Anything about building from source applies there.
 
 Let your agent ask a teammate's agent for something directly, while a person on
 each side decides what reaches their own agents.
@@ -250,8 +250,8 @@ reconnecting gets the same address back, and nobody has to verify anything.
 
 Mail to another person is sealed on your machine so that only their verified
 machines can read it. The relay carries it between machines and cannot read it.
-The relay still sees connection details; see Hosted Relay in
-`docs/operating.md` for the list.
+The relay still sees who is writing to whom, when, and how much; see
+[the relay trust model](https://github.com/agenticfabriq/internswarm/blob/main/docs/relay-trust-model.md) for what it sees and stores.
 
 The portal shows machines by their labels only. Keys and fingerprints are
 compared in the app, never in the portal.
