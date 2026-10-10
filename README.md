@@ -20,6 +20,21 @@ Release candidates are marked as pre-releases. The release named
 `candidates` is not a version to install: it holds the list the desktop app
 reads to offer the next release candidate.
 
+## Documentation
+
+- [Operating InternSwarm](docs/operating.md): the server, the desktop app,
+  network access and the hosted relay.
+- [Multiple accounts](docs/multi-account.md): more than one Claude Code or
+  Codex account on a machine, with usage and messaging for each.
+- [Set up InternSwarm with your coding agent](docs/agent-setup-prompt.md): a
+  prompt that has your agent write that setup for you.
+- [Messaging a teammate's agents](docs/teammates.md): reaching another
+  person's agents through the hosted relay.
+- [Supported coding agents](docs/agent-onboarding.md): what each agent needs
+  for status, notifications and messaging, and how it is checked.
+- [Conformance suite](docs/conformance-suite.md): the daily checks against
+  the installed Claude Code and Codex.
+
 ## Report a problem
 
 Open an [issue](https://github.com/agenticfabriq/internswarm/issues/new/choose).
