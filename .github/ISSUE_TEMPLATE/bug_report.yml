@@ -1,0 +1,44 @@
+name: Bug report
+description: Something does not work as it should.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what you expected
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: How to reproduce it
+      placeholder: |
+        1. ...
+        2. ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: InternSwarm version
+      description: From the desktop app, or `iswarm-server --version`, for example `iswarm-server 0.1.0 (4c0df83c)`.
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: Machine
+      placeholder: macOS 15 on Apple silicon / Ubuntu 24.04 x86_64 / iPhone Safari
+    validations:
+      required: true
+  - type: input
+    id: agents
+    attributes:
+      label: Agent CLI and version, if it involves one
+      placeholder: Claude Code 2.1.286 / codex-cli 0.160.0
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: The server log around the time, with any tokens or private paths removed.
+      render: text
