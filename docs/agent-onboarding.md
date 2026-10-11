@@ -1,6 +1,6 @@
 # Supported coding agents
 
-> Published from InternSwarm's code repository, which is not public yet, at ff8dce29. Anything about building from source applies there.
+> Published from InternSwarm's code repository, which is not public yet, at 420ba314. Anything about building from source applies there.
 
 InternSwarm runs any coding-agent CLI in a terminal it owns. A **verified**
 agent gets more than a terminal: a status read from the structure of its

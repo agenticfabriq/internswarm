@@ -1,6 +1,6 @@
 # Conformance suite
 
-> Published from InternSwarm's code repository, which is not public yet, at ff8dce29. Anything about building from source applies there.
+> Published from InternSwarm's code repository, which is not public yet, at 420ba314. Anything about building from source applies there.
 
 ## What it is
 
@@ -22,7 +22,7 @@ loopback ports, with every `CLAUDE*`, `ISWARM_*` and `CODEX_COMPANION*`
 variable removed from its environment. It never talks to a server or app
 you already run. It launches each CLI through an account wrapper, in a work
 folder it keeps between runs, and drives a few one-shot turns: at most 8
-short Claude turns and 3 Codex turns per run.
+short Claude turns and 5 Codex turns per run.
 
 | Option | Default | |
 |---|---|---|
@@ -128,7 +128,7 @@ launchctl kickstart "gui/$(id -u)/com.iswarm.conformance"   # one run now, to ch
 launchctl bootout "gui/$(id -u)/com.iswarm.conformance"     # to stop it
 ```
 
-A run uses about 8 short Claude turns and 3 Codex turns on the named
+A run uses about 8 short Claude turns and 4 Codex turns on the named
 accounts. Only one run holds the work folder at a time, so a run you start
 by hand while the daily one is going exits 2 and names it.
 
@@ -268,6 +268,16 @@ Codex:
   Codex's screen is read until `/quit`, the session never reads no agent,
   and it reads no agent after `/quit`, by the sampler or the shell's exit
   report.
+- `codex.inline-renderer`: after the last `/quit`, the suite types
+  `<wrapper> --no-alt-screen` into the session's own shell, as a person
+  relaunching by hand would, and Codex draws inline: the shell's launch line
+  stays above Codex's header, which the default renderer's alternate screen
+  never shows. When it does not, the three checks below are skipped: read on
+  a screen that is not inline, they would pass as inline ones.
+- `codex.inline-idle`: the inline idle screen reads as idle.
+- `codex.inline-approval`: an approval drawn inline reads as needing input.
+- `codex.inline-answer`: answering it with `1` runs the command, the turn
+  finishes, and the session reads idle again.
 
 A real rate limit cannot be provoked on demand, but an account in daily use
 meets one often. So the limit checks read the newest limit record in the

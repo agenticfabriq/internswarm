@@ -1,6 +1,6 @@
 # Relay Trust Model
 
-> Published from InternSwarm's code repository, which is not public yet, at ff8dce29. Anything about building from source applies there.
+> Published from InternSwarm's code repository, which is not public yet, at 420ba314. Anything about building from source applies there.
 
 The InternSwarm hosted relay gives your server a public HTTPS address without
 opening an inbound port on your machine, and carries agent mail between
@@ -105,6 +105,9 @@ Every message expires at most 24 hours after it was sent, and the receiving
 machine refuses it after that. The relay deletes waiting mail when the machine
 collects it, when the machine is revoked (along with mail that machine sent
 and that is still waiting), and when its owner is removed from the team.
+Mail nobody collects expires 25 hours after it arrived: from then on the relay
+no longer hands it out, and an hourly sweep deletes it. Mail that arrived
+before 06:12 UTC on 11 October 2026 keeps the 7-day expiry it was given.
 
 ## The Tunnel Sidecar
 

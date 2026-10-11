@@ -1,6 +1,6 @@
 # Multiple accounts
 
-> Published from InternSwarm's code repository, which is not public yet, at ff8dce29. Anything about building from source applies there.
+> Published from InternSwarm's code repository, which is not public yet, at 420ba314. Anything about building from source applies there.
 
 Switch accounts the moment one hits its usage limit, without losing
 agent-to-agent messaging or per-account usage numbers along the way.
