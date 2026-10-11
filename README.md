@@ -30,6 +30,8 @@ reads to offer the next release candidate.
   prompt that has your agent write that setup for you.
 - [Messaging a teammate's agents](docs/teammates.md): reaching another
   person's agents through the hosted relay.
+- [Relay trust model](docs/relay-trust-model.md): what the hosted relay can
+  see and keeps, agent mail included, and what you still trust it with.
 - [Supported coding agents](docs/agent-onboarding.md): what each agent needs
   for status, notifications and messaging, and how it is checked.
 - [Conformance suite](docs/conformance-suite.md): the daily checks against

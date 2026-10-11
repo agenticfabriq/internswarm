@@ -1,6 +1,6 @@
 # Supported coding agents
 
-> Published from InternSwarm's code repository, which is not public yet, at 4513fb35. Anything about building from source applies there.
+> Published from InternSwarm's code repository, which is not public yet, at ff8dce29. Anything about building from source applies there.
 
 InternSwarm runs any coding-agent CLI in a terminal it owns. A **verified**
 agent gets more than a terminal: a status read from the structure of its
@@ -16,7 +16,8 @@ agent does today and what a few minutes of setup buys. Someone adding an
 agent can use the capability list as the definition of done.
 
 **Verified today:** Claude Code and Codex. **Unverified:** Gemini CLI, Aider,
-Goose and OpenCode. Antigravity (`agy`) is the next agent through this list.
+Goose and OpenCode. Antigravity (`agy`) is the next agent through this list:
+its column below was measured on 2026-10-10, and nothing for it is built yet.
 Statuses below were measured on Claude Code 2.1.288 and Codex 0.160.0.
 
 ## What "verified" switches on
@@ -44,31 +45,37 @@ inbox rather than typed into its prompt.
 (see [Setting up your machine](#setting-up-your-machine)). "Agent settings"
 means the CLI's own configuration.
 
-| | Capability | Claude Code | Codex | Provided by |
-|---|---|---|---|---|
-| C1 | Registration and tier | ✓ | ✓ | App |
-| C2 | Launch from a typed line, with the app's flags | ✓ | ✓ | App, or wrapper |
-| C3 | The process sampler names the agent | ✓ | ✓ | App |
-| C4 | The record read is this session's | ✓ | ✓ | App; wrapper for a hand relaunch of Claude Code |
-| C5 | Restart resumes the conversation | ✓ | ✓ | App |
-| C6 | Turns: start, end, finished or interrupted, length | ✓ | ✓ | App |
-| C7 | A usage limit, with its reset time | ✓ | ✓ | App |
-| C8 | Background work | ✓ Waiting | by design | App |
-| C9 | Screen reader, per renderer | ✓ classic, partial full-screen | ✓ default and inline | App |
-| C10 | Prompt options and the key that answers | ✓ | ✓ | App |
-| C11 | Auto-answer confirms a real tool call | ✓ | ✓ | App; wrapper for a hand relaunch of Claude Code |
-| C12 | Notifications | ✓ | ✓ | App |
-| C13 | Typed mail | ✓ | ✓ | App |
-| C14 | Relayed text cannot forge the reader's marks | ✓ | ✓ | App |
-| C15 | MCP messaging | ✓ | ✓ | App; wrapper or agent settings for a hand relaunch; agent settings to approve the tool |
-| C16 | Environment and the agent's own markers | partial | ✓ | How you start the app |
-| C17 | Unreadable-screen health marker | ✓ | ✓ | App |
-| C18 | Re-checked on every CLI update | ✓, with gaps | ✓, with gaps | App repo |
-| P1 | Model, effort, permission mode, tokens | ✓ | ✓ | App, plus a shared store for wrappers |
-| P2 | Account label, quota, several accounts | ✓ | ✓ | Wrapper |
+| | Capability | Claude Code | Codex | Antigravity | Provided by |
+|---|---|---|---|---|---|
+| C1 | Registration and tier | ✓ | ✓ | ✗, runs as Gemini | App |
+| C2 | Launch from a typed line, with the app's flags | ✓ | ✓ | ✓ | App, or wrapper |
+| C3 | The process sampler names the agent | ✓ | ✓ | measured | App |
+| C4 | The record read is this session's | ✓ | ✓ | measured | App; wrapper for a hand relaunch of Claude Code |
+| C5 | Restart resumes the conversation | ✓ | ✓ | measured | App |
+| C6 | Turns: start, end, finished or interrupted, length | ✓ | ✓ | measured, no turn end | App |
+| C7 | A usage limit, with its reset time | ✓ | ✓ | – | App |
+| C8 | Background work | ✓ Waiting | by design | – | App |
+| C9 | Screen reader, per renderer | ✓ classic, partial full-screen | ✓ default and inline | measured, inline | App |
+| C10 | Prompt options and the key that answers | ✓ | ✓ | measured | App |
+| C11 | Auto-answer confirms a real tool call | ✓ | ✓ | – | App; wrapper for a hand relaunch of Claude Code |
+| C12 | Notifications | ✓ | ✓ | ✗ | App |
+| C13 | Typed mail | ✓ | ✓ | ✗, inbox only | App |
+| C14 | Relayed text cannot forge the reader's marks | ✓ | ✓ | – | App |
+| C15 | MCP messaging | ✓ | ✓ | partial | App; wrapper or agent settings for a hand relaunch; agent settings to approve the tool |
+| C16 | Environment and the agent's own markers | partial | ✓ | measured, nested untested | How you start the app |
+| C17 | Unreadable-screen health marker | ✓ | ✓ | – | App |
+| C18 | Re-checked on every CLI update | ✓, with gaps | ✓, with gaps | ✗ | App repo |
+| P1 | Model, effort, permission mode, tokens | ✓ | ✓ | measured | App, plus a shared store for wrappers |
+| P2 | Account label, quota, several accounts | ✓ | ✓ | partial | Wrapper |
 
 P1 and P2 are parity rows: nothing in the verified tier depends on them, but
 a customer notices them first.
+
+The Antigravity column is a measurement, not support. **measured** means
+what the agent offers for that capability was observed and recorded, not
+that it is enough, and the app uses none of it yet; ✗ means the app gives it
+nothing today; – was not measured. The details are under
+[Antigravity, measured](#antigravity-measured).
 
 ## The capabilities
 
@@ -108,7 +115,9 @@ lose without it.
 
 - **Needs from the agent:** a recognisable foreground process: its
   executable's name, its process name, or a `<agent>/versions/<version>`
-  path.
+  path. A CLI that updates itself while it runs can rename its own
+  executable (Antigravity's became `antigravity.<number>.old`), so match
+  the process name.
 - **Claude Code / Codex:** `classify_agent_name` knows `claude`,
   `claude-code` and `codex`, each with or without `.exe`: Claude Code from
   npm runs as `bin/claude.exe`. Unix only; on Windows the sampler does nothing.
@@ -316,6 +325,12 @@ lose without it.
   started under those markers still runs Codex sessions that start their own
   thread and keep their record. Not measured: whether an inherited
   `CODEX_SANDBOX` changes how a nested Codex sandboxes its own commands.
+  **Antigravity:** measured on 1.2.12: the commands it runs see the
+  terminal's `ISWARM_*` variables, its own markers (`ANTIGRAVITY_AGENT`,
+  `ANTIGRAVITY_CONVERSATION_ID`, `ANTIGRAVITY_TRAJECTORY_ID`,
+  `ANTIGRAVITY_PROJECT_ID` and six more) and `GIT_PAGER`. A stdio MCP server
+  it starts sees the `ISWARM_*` variables and none of its markers. Not
+  measured: what an inherited marker does to a nested Antigravity.
 - **Provided by:** how you start the app. **Start InternSwarm from Finder,
   the Dock or a plain terminal, never from inside a Claude Code or Codex
   session.**
@@ -337,6 +352,10 @@ lose without it.
   renderer of each CLI, Codex interrupt, resize and typed
   mail, the turn-length fields, the account readers, and Linux (the daily job
   runs on macOS).
+- **A CLI that updates itself** must have its version recorded on every run.
+  Antigravity replaces its executable while it runs, and the next start is
+  the new version: 1.2.11 became 1.3.3 on macOS and 1.2.12 became 1.3.3 on
+  Linux, on 2026-10-10.
 
 ### P1. Model, effort, permission mode, tokens
 
@@ -390,16 +409,58 @@ What each piece buys, from the table above:
 | Approve `iswarm_message` once | agent settings | C15 unattended |
 | Start the app from Finder, never from inside Claude Code or Codex | how you launch | C16 |
 
+## Antigravity, measured
+
+Measured on 2026-10-10 on Linux arm64 (1.2.12, then 1.3.3 once it had
+updated itself), run as the Gemini type with Command `agy`, against step 1 of
+[Adding an agent](#adding-an-agent). Nothing below is built.
+
+- **C3:** the process is named `agy`. Its executable path is not stable (see
+  C3), and the session reads "no agent" whenever its output is quiet.
+- **C4, C6:** it holds `~/.gemini/antigravity-cli/conversations/<id>.db` and
+  `presence/<id>.lock` open, so the conversation can be found from the
+  process, as Codex's rollout is. Each conversation also writes
+  `brain/<id>/.system_generated/logs/transcript.jsonl`, one row per step
+  (`step_index`, `source`, `type`, `status`, `created_at`). A turn is a
+  `USER_INPUT` row followed by `PLANNER_RESPONSE` rows; no row marks its end.
+  The model and the token counts are kept only in protobuf blobs in the
+  conversation database, which has no published schema.
+- **C5:** `agy --conversation <id>` resumes a conversation, and `/exit` prints
+  that line.
+- **C9:** the sign-in and folder-trust screens use the alternate screen;
+  after them it draws inline on the main screen, each frame inside
+  synchronized output, with the kitty keyboard protocol, no mouse reporting
+  and no OSC sequences. The input region is a `>` line between two
+  full-width rules, with `? for shortcuts` and the model below it.
+- **C10:** three prompt kinds: folder trust (↑/↓, then Enter), a command
+  permission (four numbered options) and an MCP tool approval (six). A bare
+  digit answers the numbered ones, with no Enter.
+- **C15:** no per-launch flag. `agy mcp add` writes one file for every
+  session, and it expands neither `${VAR}` nor `$VAR`, so a saved HTTP entry
+  would carry one session's token into all of them. With literal values the
+  iswarm tool works. A stdio server it starts inherits the session's
+  `ISWARM_*` variables, so a stdio-to-HTTP bridge started through `sh -c` is
+  the one-time setup still to build.
+- **P1, P2:** the footer shows the model and effort, and the banner the
+  account and its quota plan. `ANTIGRAVITY_APP_DATA_DIR` does not select
+  another account's folder, and no other way was found.
+- **Not measured:** C7 (a limit needs an exhausted quota), C8 and C11.
+
 ## Adding an agent
 
 Measure before building, and flip the tier last.
 
-1. **Measure the agent.** Its foreground process name and executable path
-   (C3); whether it writes a per-conversation record, and how it can be tied
-   to one terminal (C4, C6, C7); every renderer, captured with
+1. **Measure the agent.** Run it as an unverified type that adds no flags,
+   with the CLI as its Command (Antigravity ran as Gemini). Then measure its
+   foreground process name and executable path (C3); whether it writes a
+   per-conversation record, and how it can be tied to one terminal (C4, C6,
+   C7); every renderer, captured with
    `ISWARM_SCREEN_CAPTURE_DIR` (C9), and a capture of every prompt kind with
    the key that answers it (C10); how it takes an MCP server per launch
    (C15); and which environment variables it sets for its children (C16).
+   The app has no capture viewer: replay a capture through
+   `screen_capture::replay` in a test, or decode its `out` frames into one
+   file and `cat` it in a terminal of the recorded size.
 2. **Build the readers against the captures.** Add the agent to every
    per-agent `match` (C1), the process classifier (C3), the record reader
    (C4, C6, C7, C8), the screen reader and its fixtures (C9), the relayed-text

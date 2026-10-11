@@ -1,6 +1,6 @@
 # Operating InternSwarm
 
-> Published from InternSwarm's code repository, which is not public yet, at 4513fb35. Anything about building from source applies there.
+> Published from InternSwarm's code repository, which is not public yet, at ff8dce29. Anything about building from source applies there.
 
 How the server, the desktop app and the hosted relay fit together, and how to
 run, expose and install a server by hand. The [README](../README.md) is the
@@ -27,7 +27,7 @@ Native TLS settings live in `server-admin.json` beside `local-server.json`. Publ
 
 ## Hosted Relay (optional)
 
-InternSwarm can reach a private server from anywhere through the **InternSwarm hosted relay** — a managed service that gives your server a stable public hostname without opening inbound ports. App TLS terminates in your `iswarm-server`, so the relay cannot read sessions, terminal output, prompts, files, cookies, pairing tokens or certificate private keys. It does see connection metadata: the SNI hostname, the client's IP address and port, the account, server, tunnel and region identifiers, connection timing, duration and byte counts, and tunnel health. In the default managed-domain mode the relay's operator controls DNS for your hostname; a customer domain with your own certificate removes that trust.
+InternSwarm can reach a private server from anywhere through the **InternSwarm hosted relay** — a managed service that gives your server a stable public hostname without opening inbound ports. App TLS terminates in your `iswarm-server`, so the relay cannot read sessions, terminal output, prompts, files, cookies, pairing tokens or certificate private keys. It does see connection metadata: the SNI hostname, the client's IP address and port, the account, server, tunnel and region identifiers, connection timing, duration and byte counts, and tunnel health. The relay's operator controls DNS for your relay hostname; to remove that trust, publish with **My own domain** instead, which serves direct HTTPS with no relay. [The relay trust model](relay-trust-model.md) says what the relay sees and stores, agent mail included.
 
 The relay is a paid hosted service and its server components are not part of this repository. This repository contains the **client** integration: `iswarm-server` owns public-access mode, HTTPS, certificates, relay account linkage, hostname selection, and tunnel lifecycle, and drives the bundled `iswarm-tunnel` sidecar. If the sidecar stops, relay reachability stops, but `iswarm-server` keeps running and direct localhost/LAN/VPN/Tailscale URLs continue to work.
 

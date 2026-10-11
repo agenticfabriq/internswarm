@@ -1,6 +1,6 @@
 # Conformance suite
 
-> Published from InternSwarm's code repository, which is not public yet, at 4513fb35. Anything about building from source applies there.
+> Published from InternSwarm's code repository, which is not public yet, at ff8dce29. Anything about building from source applies there.
 
 ## What it is
 
