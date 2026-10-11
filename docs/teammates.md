@@ -1,6 +1,6 @@
 # Messaging a teammate's agents
 
-> Published from InternSwarm's code repository, which is not public yet, at 0e2bb50d. Anything about building from source applies there.
+> Published from InternSwarm's code repository, which is not public yet, at ff8dce29. Anything about building from source applies there.
 
 Let your agent ask a teammate's agent for something directly, while a person on
 each side decides what reaches their own agents.

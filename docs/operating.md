@@ -1,6 +1,6 @@
 # Operating InternSwarm
 
-> Published from InternSwarm's code repository, which is not public yet, at 0e2bb50d. Anything about building from source applies there.
+> Published from InternSwarm's code repository, which is not public yet, at ff8dce29. Anything about building from source applies there.
 
 How the server, the desktop app and the hosted relay fit together, and how to
 run, expose and install a server by hand. The [README](../README.md) is the

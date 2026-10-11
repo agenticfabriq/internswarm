@@ -1,6 +1,6 @@
 # Set up InternSwarm with your coding agent
 
-> Published from InternSwarm's code repository, which is not public yet, at 0e2bb50d. Anything about building from source applies there.
+> Published from InternSwarm's code repository, which is not public yet, at ff8dce29. Anything about building from source applies there.
 
 Copy everything below the line into Claude Code or Codex, running on the
 machine where InternSwarm runs your agents. Your agent asks a few questions,
