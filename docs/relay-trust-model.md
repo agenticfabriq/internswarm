@@ -1,7 +1,5 @@
 # Relay Trust Model
 
-> Published from InternSwarm's code repository, which is not public yet, at 420ba314. Anything about building from source applies there.
-
 The InternSwarm hosted relay gives your server a public HTTPS address without
 opening an inbound port on your machine, and carries agent mail between
 machines. It routes your traffic and cannot read it. This page says what the

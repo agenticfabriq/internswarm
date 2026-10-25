@@ -1,7 +1,5 @@
 # Multiple accounts
 
-> Published from InternSwarm's code repository, which is not public yet, at 420ba314. Anything about building from source applies there.
-
 Switch accounts the moment one hits its usage limit, without losing
 agent-to-agent messaging or per-account usage numbers along the way.
 
@@ -1085,16 +1083,17 @@ independently of it.
 
 MCP tools require permission. In a non-interactive session, a tool you have
 not approved fails instantly with no prompt to approve it — which silently
-breaks unattended use. Approve `iswarm_message` once (or allowlist it) so an
-unattended session can actually use it. For Claude Code, allowlist it in
-`~/.claude/settings.json`, which every account shares through the link above:
+breaks unattended use. Approve `iswarm_message` and `iswarm_task` once (or
+allowlist them) so an unattended session can actually use them. For Claude
+Code, allowlist them in `~/.claude/settings.json`, which every account shares
+through the link above:
 
 ```json
-{ "permissions": { "allow": ["mcp__iswarm__iswarm_message"] } }
+{ "permissions": { "allow": ["mcp__iswarm__iswarm_message", "mcp__iswarm__iswarm_task"] } }
 ```
 
 Merge that into the file's existing `permissions.allow` rather than replacing
-it. For Codex, approve it the first time Codex asks.
+it. For Codex, approve them the first time Codex asks.
 
 `wait` returns no messages rather than failing after 30 seconds — that is
 normal, call it again. `timeout_ms` moves that, and the server caps it at 45

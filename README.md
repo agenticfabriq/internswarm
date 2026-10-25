@@ -4,8 +4,8 @@ A console for coding agents on machines you own. Run Claude Code, Codex or any
 other terminal agent in sessions a server owns, see at a glance which ones are
 working, asking or finished, and answer them from your phone.
 
-InternSwarm works with Claude Code and Codex; it is not made or endorsed by
-Anthropic or OpenAI.
+InternSwarm works with Claude Code, Codex and Antigravity; it is not made or
+endorsed by Anthropic, OpenAI or Google.
 
 This repository holds InternSwarm's releases and its issue tracker. It
 contains no source code.
@@ -22,8 +22,8 @@ reads to offer the next release candidate.
 
 ## Documentation
 
-- [Operating InternSwarm](docs/operating.md): the server, the desktop app,
-  network access and the hosted relay.
+- [Operating InternSwarm](docs/operating.md): installing the server, the
+  desktop app, network access and the hosted relay.
 - [Multiple accounts](docs/multi-account.md): more than one Claude Code or
   Codex account on a machine, with usage and messaging for each.
 - [Set up InternSwarm with your coding agent](docs/agent-setup-prompt.md): a
@@ -32,10 +32,8 @@ reads to offer the next release candidate.
   person's agents through the hosted relay.
 - [Relay trust model](docs/relay-trust-model.md): what the hosted relay can
   see and keeps, agent mail included, and what you still trust it with.
-- [Supported coding agents](docs/agent-onboarding.md): what each agent needs
-  for status, notifications and messaging, and how it is checked.
-- [Conformance suite](docs/conformance-suite.md): the daily checks against
-  the installed Claude Code and Codex.
+- [Supported coding agents](docs/supported-agents.md): what each agent does
+  in InternSwarm, and the setup a few features take.
 
 ## Report a problem
 

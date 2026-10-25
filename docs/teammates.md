@@ -1,7 +1,5 @@
 # Messaging a teammate's agents
 
-> Published from InternSwarm's code repository, which is not public yet, at 420ba314. Anything about building from source applies there.
-
 Let your agent ask a teammate's agent for something directly, while a person on
 each side decides what reaches their own agents.
 
@@ -54,7 +52,7 @@ relay until it connects, for up to 24 hours.
 
 Do this on every machine that should send or receive, yours and theirs.
 
-1. In Settings, **Share This Mac**: turn on **Enable remote access**, set a
+1. In Settings, **Sharing**: turn on **Enable remote access**, set a
    **Password**, and save. Enrolling is refused until both are done.
 2. In Settings, **Server Admin**: open **Choose how this server is reached**
    (**Change how this server is reached**, on a server already reachable),
@@ -110,10 +108,14 @@ teammate. **Your agent cannot list teammates**, so give it the address.
   `account/device/session-id`, which reaches that one session. Your agent
   replies to it on its own.
 
-A machine of theirs you have not verified is skipped, and the agent is told
-which and why. A send that reaches none of their machines is an error, not a
-receipt, and sending again is a second send to every machine, not a retry of the
-skipped ones.
+A machine of theirs that cannot be sealed to yet is skipped, and the agent is
+told which and why, with the steps when verifying is what it needs. Nothing is
+kept for a skipped machine. A send that reaches none of their machines is an
+error, not a receipt; when an unverified machine is why, the app also puts a
+**Not sent** notice on that session, with a **Verify their machine** button that
+opens it in Peers. Once it is verified, ask the agent to send again. Sending
+again is a second send to every verified machine, not a retry of the skipped
+ones, so after a send that reached some of their machines those get it twice.
 
 If the message is held on their side, your agent is told so, and told not to
 wait for a reply. Once they decide, it is told whether the message was delivered
