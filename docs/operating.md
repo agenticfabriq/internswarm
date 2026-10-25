@@ -1,10 +1,8 @@
 # Operating InternSwarm
 
-> Published from InternSwarm's code repository, which is not public yet, at 420ba314. Anything about building from source applies there.
-
 How the server, the desktop app and the hosted relay fit together, and how to
-run, expose and install a server by hand. The [README](../README.md) is the
-short version.
+install, run and expose a server. The [README](../README.md) is the short
+version.
 
 ## Current Product Model
 
@@ -31,13 +29,39 @@ InternSwarm can reach a private server from anywhere through the **InternSwarm h
 
 The relay is a paid hosted service and its server components are not part of this repository. This repository contains the **client** integration: `iswarm-server` owns public-access mode, HTTPS, certificates, relay account linkage, hostname selection, and tunnel lifecycle, and drives the bundled `iswarm-tunnel` sidecar. If the sidecar stops, relay reachability stops, but `iswarm-server` keeps running and direct localhost/LAN/VPN/Tailscale URLs continue to work.
 
+### A server with no desktop, on the relay
+
+The relay makes a server reachable from the internet, so relay setup refuses a server until it has remote access on and an admin password. **Sharing** sets both on any server the app is connected to, except where the server's `~/.config/iswarm/iswarm.env` sets them: Sharing shows those locked, and they are changed in that file. A server with no desktop, such as the packaged Linux server, is usually set up in `iswarm.env`:
+
+1. In `~/.config/iswarm/iswarm.env`, set:
+
+   ```bash
+   ISWARM_REMOTE_ACCESS_ENABLED=true
+   ISWARM_AUTH_PASSWORD=<a strong password of your own>
+   ```
+
+   **`change-me`, the example older packages wrote here, is not a password.** The server ignores it, and with remote access on and no other password it refuses to start until you set one. Once the server is on the relay, this password is what stands between the internet and a shell on this machine. The relay needs no change to `ISWARM_BIND_ADDRESS`: its tunnel connects outward from this machine. Leave `ISWARM_PUBLIC_ACCESS_POLICY` unset; setup switches the server to relay mode itself once its certificate is installed.
+2. Restart the server: `systemctl --user restart iswarm` on Linux, `launchctl kickstart -k "gui/$(id -u)/ai.internswarm.server"` on macOS.
+3. Reach the server from your desktop app. Forward a port with `ssh -N -L 17822:127.0.0.1:7822 <server>`, using the server's `ISWARM_PORT` in place of `7822` if you changed it, then add `http://127.0.0.1:17822` in **Connect to Servers** (a server you bound to a LAN or VPN address can be added by that address instead). Sign in as `admin`, or your `ISWARM_AUTH_USERNAME`, with the password above.
+
+   Steps 1 and 2 can be done from the app instead when `iswarm.env` has no uncommented `ISWARM_REMOTE_ACCESS_ENABLED` line. Older packages wrote `ISWARM_REMOTE_ACCESS_ENABLED=false`, which counts: Sharing then shows remote access locked. Add the server without signing in, which it does not ask for while remote access is off. In **Sharing**, with this server selected, turn on remote access and set a password, unless `iswarm.env` sets one, then sign in with it.
+4. Open **Server Admin** for that server, choose **Hosted relay**, and approve the code in the portal. Installing the certificate takes about two minutes. The server is then reachable from anywhere at the relay hostname Server Admin shows, behind its sign-in.
+
+**Behind an HTTP proxy.** If this machine reaches the internet only through an HTTP proxy, add it to `iswarm.env` before step 2:
+
+```bash
+HTTPS_PROXY=http://proxy.example.com:3128
+```
+
+Relay setup and the relay tunnel both use it, and `NO_PROXY` lists hosts that bypass it. The tunnel takes its proxy only from environment variables, never from the operating system's proxy setting, so set `HTTPS_PROXY` here even on a machine that already has a system proxy. The tunnel asks the proxy for a `CONNECT` to the relay. It goes only through an `http://` proxy, with `user:password@` in the URL if the proxy asks for credentials; if the proxy for the relay is a `socks5://` or `https://` one, the tunnel logs a warning in the server log and dials the relay directly. The tunnel still checks the relay's own certificate against its built-in roots, so the proxy has to pass the relay's host through rather than re-sign it.
+
 ## Configuration UX
 
 Desktop settings separate client reachability from server authority:
 
 - **Connect to Servers** is the desktop client registry. It stores local/remote server URLs and sign-in state so the desktop can connect to those servers.
 - **Server Admin** configures the selected authenticated `iswarm-server`: public access mode, native HTTPS, certificate state, relay account/hostnames, and `iswarm-tunnel` lifecycle.
-- **Share This Mac** remains the desktop-owned local server bind/auth policy for localhost, LAN, VPN, and Tailscale use.
+- **Sharing** sets the selected server's bind and sign-in policy for localhost, LAN, VPN, and Tailscale use. Settings that server's `iswarm.env` sets are shown locked and are changed there.
 - **Mobile Pairing** issues the pairing token on the selected server. When that server has relay enabled and a relay hostname, the QR URL prefers `https://<relay-hostname>`; direct private URLs remain usable when relay is disabled.
 
 ## When a Session's Shell Asks Something at Startup
@@ -116,6 +140,48 @@ prompt to approve it — approve `iswarm_message` once (or allowlist it) so an u
 session can actually use the feature. Both of the above apply whether messaging reached the
 session automatically or through a snippet pasted by hand below.
 
+**Claude may check with you before it answers a message.** A message is typed into the
+agent's prompt, and Claude Code can show a longer one to Claude as pasted text. In the trials
+behind this paragraph, with Claude Code 2.1.302, Claude answered on its own in a new
+conversation, but in one where you had been telling it when to reply it kept asking you
+about each new message. Telling it once, in that conversation, *you can reply if you don't
+need me for decision or discussion* made it answer on its own, and it still asked you first
+when another person's message wanted more than a reply, such as running commands and sending
+back what they printed. All of that is Claude's own judgement, seen in a few trials of one
+version; nothing in InternSwarm enforces it. InternSwarm decides only which mail reaches the
+prompt, as [Held Mail](teammates.md#held-mail) and
+[Letting mail skip Held Mail](teammates.md#letting-mail-skip-held-mail) describe. Mail that
+reaches it is typed in like your own words, so keep the permission to replies, as that
+wording does.
+
+### Long commands: `iswarm_task`
+
+A coding agent stops a command that runs past its own limit (ten minutes for a Claude Code
+shell command), which cuts short a long build or a review-gated `git commit`. The
+`iswarm_task` tool, on the same `iswarm` MCP server, runs the command in a terminal tab of the
+agent's own session instead and answers at once. When the command ends, a one-line notice is
+typed into the agent's prompt, so the agent can end its turn and carry on when told.
+
+- Up to 4 tasks run at once in a session.
+- The tab closes when the command succeeds, and stays, titled with its exit code, when it
+  fails. Closing a running task's tab asks first, then stops the task and everything it
+  started.
+- The output goes to a temporary log that keeps the first 1 MB and about the last 10 MB. It
+  goes with its session, or once 50 newer tasks in the session have ended, and the OS may
+  clear it sooner.
+- Quitting the app while tasks run always asks first, then stops them. The next start tells
+  each agent its task was interrupted. After a crash, on macOS and Linux, the next start
+  also stops what it can prove a task left running in its terminal session, retrying at
+  each start until that is done; a process that started a session of its own (`setsid`)
+  has left it and is not stopped.
+- Only the session's own agent can use it, and only through the server's plain-HTTP
+  listener, the one its agents reach at 127.0.0.1, whether remote access binds it to
+  loopback or to the network. A call through the HTTPS listener, where the relay's traffic
+  arrives, is refused. An agent that reaches a server through an ssh tunnel to that server's
+  plain-HTTP port can run tasks on that server's machine, so wire one only to machines you
+  control.
+- Approve or allowlist it like `iswarm_message`: `mcp__iswarm__iswarm_task` for Claude Code.
+
 ### Other CLIs, or by hand
 
 Setup is one-time per machine: paste the snippet for your CLI into its config once, and the
@@ -153,92 +219,19 @@ variable is passed through as the literal string `${ISWARM_CHANNEL_TOKEN}`, and 
 rejects that with its own 401 message — so a session launched outside InternSwarm fails cleanly
 instead of mysteriously.
 
-## Building from source
+## Installing the server
 
-### Desktop With Local Server
-
-```bash
-npm install
-npm run build
-npm run tauri:dev
-```
-
-The desktop app starts the local server when `Start local server with desktop` is enabled in Settings.
-
-#### Inspecting a release build
-
-`npm run tauri:dev` already gives you a WebKit inspector — it builds with
-`debug_assertions`, and tauri-runtime-wry enables devtools under
-`any(debug_assertions, feature = "devtools")`. What has never been inspectable
-is a RELEASE build, which is the one that reproduces slow-burn behaviour like
-memory growth over hours.
+For the newest full release, one line picks the archive for your machine,
+checks it against the release's checksums, and installs it:
 
 ```bash
-npm run tauri:build:devtools
+curl -fsSL https://github.com/agenticfabriq/internswarm/releases/latest/download/install.sh | sh
 ```
 
-That adds the opt-in `devtools` cargo feature. Attach from Safari:
-**Develop → [your Mac] → tauri://localhost**.
-
-Three things to know before you use it.
-
-**It is deliberately not the default.** An inspectable production app is a
-different thing to ship, so this is a build you make on purpose.
-
-**The artifact is indistinguishable from a shippable one.** It writes to the
-same `target/release/bundle/` paths under the same product name, version and
-identifier as a plain `tauri build`. Nothing in the filename says "inspectable".
-Delete it when you are done, or you will eventually ship it by accident. The
-discriminators are Safari's Develop menu seeing it, or
-`strings <binary> | grep developerExtrasEnabled`.
-
-**It changes what you are measuring.** wry sets `developerExtrasEnabled` for the
-webview's whole lifetime, and an attached Web Inspector retains JS objects and
-adds instrumentation of its own. Dirty-page numbers from this build are not
-directly comparable to the shipped one, and nobody has quantified the gap — so
-use it to find a retainer, not to certify a floor.
-
-On the App Store: `setInspectable(true)` is public API (macOS 13.3+), but wry
-also sets `developerExtrasEnabled`, a private KVC key on `WKPreferences`, on
-every macOS version whenever the feature is on. A binary built this way must not
-go to the App Store. For a DMG it is fine, which is how this ships.
-
-### Standalone Server From Source
-
-Use this for a persistent server on the same machine or another private-network host:
-
-```bash
-npm install
-npm run build
-cargo run --manifest-path src-tauri/Cargo.toml --bin iswarm-server --no-default-features --features headless
-```
-
-Then open `http://127.0.0.1:7822/` locally, or configure `ISWARM_REMOTE_ACCESS_ENABLED=true`, a bind address, and an auth password before exposing it on a LAN/VPN address.
-
-For direct public HTTPS access, configure `/api/server/settings`, generate a CSR with `/api/server/tls/csr`, install the returned certificate with `/api/server/tls/certificate`, and verify `/api/server/tls/status` before advertising the public URL.
-
-### Packaged Server Install
-
-Use `./scripts/install-iswarm.sh` only when you intentionally want to build from a checked-out repo on the destination machine. For normal remote deployment, use the packaged install path because the destination machine does not need Node, Rust, Cargo, or Tauri tooling.
-
-Build an installable archive on a machine with Rust and Node tooling:
-
-```bash
-npm install
-npm run package:server:check -- --platform macos-arm64
-npm run package:server -- --platform macos-arm64 --flavor release
-```
-
-For Linux packages from macOS, install the prerequisites printed by the check command, then package the target architecture:
-
-```bash
-npm run package:server:check -- --platform linux-x86_64
-npm run package:server -- --platform linux-x86_64 --flavor release
-```
-
-Packaging emits archives under `artifacts/` plus checksum, install-script, metadata JSON, and manifest sidecars. The destination machine does not need a checked-out repo or build tools.
-
-On the destination machine:
+For a release candidate, or to pick the archive yourself, download the
+server archive for your machine from that release on the
+[Releases](https://github.com/agenticfabriq/internswarm/releases) page, with
+its `.install.sh`, and on that machine run:
 
 ```bash
 chmod +x <archive-name>.install.sh
@@ -265,34 +258,3 @@ Mac's desktop. After a restart it stays down until someone does. With
 FileVault on, the disk must be unlocked first, and unlocking it over SSH
 leaves the Mac at the login window, where the server does not start. Plan on
 logging in at the Mac after each restart.
-
-## Runtime Architecture
-
-- One backend contract powers desktop, browser, tablet, and mobile clients: REST for CRUD/settings, WebSocket for PTY channels, and SSE for session/runtime events.
-- Each session has one tracked channel, usually `agent`, plus optional helper terminal channels.
-- The tracked channel drives sidebar status, notifications, mobile quick replies, and default focus.
-- Client disconnects do not kill a server-owned PTY while the owning server keeps running.
-- Each server launches its channels locally with `portable-pty`. To work on another machine, run `iswarm-server` there and connect the app to it; the app shows every connected server in one view.
-- SQLite stores projects, hosts, sessions, channels, terminals, repo settings, and prompt templates.
-
-## Project Layout
-
-```text
-intern-swarm/
-├── src-tauri/
-│   ├── src/api/         axum routes, PTY WebSocket, SSE events, static UI hosting
-│   ├── src/services/    PTY runtime, auth, session lifecycle, git/files/worktree services
-│   ├── src/commands/    thin Tauri IPC wrappers for desktop-owned local operations
-│   ├── src/db/          SQLite accessors
-│   ├── src/models/      serde models shared by API and services
-│   ├── src/tunnel/      hosted-relay client + tunnel sidecar protocol
-│   ├── migrations/      SQLite schema migrations
-│   └── src/bin/         standalone `iswarm-server` and `iswarm-tunnel` entrypoints
-├── src/                 React + Vite frontend
-├── scripts/             server packaging, install, and guide generators
-└── tests/ui/            Playwright browser workflow coverage
-```
-
-## Verification
-
-See CONTRIBUTING.md for the checks a change runs.

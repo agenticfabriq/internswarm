@@ -1,7 +1,5 @@
 # Set up InternSwarm with your coding agent
 
-> Published from InternSwarm's code repository, which is not public yet, at 420ba314. Anything about building from source applies there.
-
 Copy everything below the line into Claude Code or Codex, running on the
 machine where InternSwarm runs your agents. Your agent asks a few questions,
 writes shell wrappers for each of your accounts, links the files those
@@ -11,8 +9,8 @@ deletes nothing.
 You need this only if you relaunch agents by hand in a session's terminal
 (for example, switching accounts after a usage limit) or run several accounts
 of one CLI. Sessions the app starts need none of it. See
-[agent-onboarding.md](agent-onboarding.md) for what each piece buys, and for
-what the app does not do yet for each agent.
+[supported-agents.md](supported-agents.md) for what each piece gives you, and
+for what the app does not do yet for each agent.
 
 ---
 
@@ -166,10 +164,11 @@ conversation.
 (my chosen defaults), so the "resume with `claude --resume <id>`" hint the
 CLI prints on exit goes through the wrapper too.
 
-**Approve the messaging tool once.** For Claude Code, add
-`"mcp__iswarm__iswarm_message"` to `permissions.allow` in
-`~/.claude/settings.json` (shared by every account through the link above).
-For Codex, tell me to approve the `iswarm` tool the first time it asks.
+**Approve the iswarm tools once.** For Claude Code, add
+`"mcp__iswarm__iswarm_message"` and `"mcp__iswarm__iswarm_task"` to
+`permissions.allow` in `~/.claude/settings.json` (shared by every account
+through the link above). For Codex, tell me to approve the `iswarm` tools the
+first time it asks.
 
 ## 3. Traps
 
