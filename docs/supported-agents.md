@@ -6,7 +6,7 @@ screen and its own records, notifications when it asks or finishes,
 auto-answer, and mail typed straight into its input box.
 
 **Verified today:** Claude Code, Codex and Antigravity (`agy`).
-**Unverified:** Gemini CLI, Aider, Goose and OpenCode. Each verified agent is
+**Unverified:** Aider, Goose and OpenCode. Each verified agent is
 re-checked every day, and in full whenever a new version of it comes out.
 
 ## What each agent supports
@@ -15,7 +15,7 @@ re-checked every day, and in full whenever a new version of it comes out.
 [Setting up your machine](#setting-up-your-machine); anything the app
 launches needs nothing more.
 
-| Feature | Claude Code | Codex | Antigravity | Gemini CLI, Aider, Goose, OpenCode |
+| Feature | Claude Code | Codex | Antigravity | Aider, Goose, OpenCode |
 |---|---|---|---|---|
 | **Status:** working, waiting on you, idle | ✓ | ✓ | ✓ | from activity and silence only |
 | **Asks:** a notice when it waits on your answer | ✓ | ✓ | ✓ | no |
