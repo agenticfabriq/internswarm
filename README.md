@@ -4,8 +4,8 @@ A console for coding agents on machines you own. Run Claude Code, Codex or any
 other terminal agent in sessions a server owns, see at a glance which ones are
 working, asking or finished, and answer them from your phone.
 
-InternSwarm works with Claude Code, Codex and Antigravity; it is not made or
-endorsed by Anthropic, OpenAI or Google.
+InternSwarm works with Claude Code, Codex and Antigravity (in beta); it is not
+made or endorsed by Anthropic, OpenAI or Google.
 
 This repository holds InternSwarm's releases and its issue tracker. It
 contains no source code.
