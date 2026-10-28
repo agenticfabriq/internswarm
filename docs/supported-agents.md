@@ -5,7 +5,9 @@ agent gets more than a terminal: a status read from the structure of its
 screen and its own records, notifications when it asks or finishes,
 auto-answer, and mail typed straight into its input box.
 
-**Verified today:** Claude Code, Codex and Antigravity (`agy`).
+**Verified today:** Claude Code and Codex, and Antigravity (`agy`) in beta.
+Antigravity is new to InternSwarm and changes often, so expect the odd rough
+edge after an update; the table below shows where it differs.
 **Unverified:** Aider, Goose and OpenCode. Each verified agent is
 re-checked every day, and in full whenever a new version of it comes out.
 
@@ -15,7 +17,7 @@ re-checked every day, and in full whenever a new version of it comes out.
 [Setting up your machine](#setting-up-your-machine); anything the app
 launches needs nothing more.
 
-| Feature | Claude Code | Codex | Antigravity | Aider, Goose, OpenCode |
+| Feature | Claude Code | Codex | Antigravity (beta) | Aider, Goose, OpenCode |
 |---|---|---|---|---|
 | **Status:** working, waiting on you, idle | ✓ | ✓ | ✓ | from activity and silence only |
 | **Asks:** a notice when it waits on your answer | ✓ | ✓ | ✓ | no |
