@@ -55,6 +55,58 @@ HTTPS_PROXY=http://proxy.example.com:3128
 
 Relay setup and the relay tunnel both use it, and `NO_PROXY` lists hosts that bypass it. The tunnel takes its proxy only from environment variables, never from the operating system's proxy setting, so set `HTTPS_PROXY` here even on a machine that already has a system proxy. The tunnel asks the proxy for a `CONNECT` to the relay. It goes only through an `http://` proxy, with `user:password@` in the URL if the proxy asks for credentials; if the proxy for the relay is a `socks5://` or `https://` one, the tunnel logs a warning in the server log and dials the relay directly. The tunnel still checks the relay's own certificate against its built-in roots, so the proxy has to pass the relay's host through rather than re-sign it.
 
+## My own domain (optional)
+
+**My own domain** publishes the server at a hostname you control, with a certificate from a certificate authority you choose, and no relay in the path. Your clients connect straight to this machine.
+
+You need:
+
+- **A hostname you control,** with a DNS record pointing at this machine's public address.
+- **Port 443 of that hostname reaching the server's HTTPS port** (8443 unless you change it). Either forward 443 to it on your router, or put a TCP forwarder in front that passes TLS through untouched. The server terminates TLS with its own certificate, so the forwarder must not. With nginx's `stream` module, on the same machine:
+
+  ```nginx
+  stream {
+      server {
+          listen 443;
+          proxy_pass 127.0.0.1:8443;
+      }
+  }
+  ```
+
+  Listening on 443 directly also works where the server may bind a port below 1024. On Linux, a server running as an ordinary user may not.
+
+  **A forwarder hides your clients' addresses.** One that opens its own connection to the server, on this machine or another, makes every client arrive from the forwarder's address. They then share the server's per-client limits, sign-in's 5 attempts a minute among them, so anyone on the internet can keep sign-in refused for everyone by sending wrong passwords. A router forward keeps each client's own address and its own limits.
+- **Remote access on and an admin password**, as for the relay: see [A server with no desktop, on the relay](#a-server-with-no-desktop-on-the-relay) for where each is set. With this server published, that password is what stands between the internet and a shell on this machine.
+- **A certificate authority that signs a CSR you give it**, such as Let's Encrypt through an ACME client that accepts an existing CSR.
+
+Steps:
+
+1. In **Server Admin** for that server, open **Choose how this server is reached** (on a published server, **Change how this server is reached**) and choose **My own domain**.
+
+   **On a server that is on the hosted relay,** you are asked to leave the relay first. Its hostname stops answering and paired phones lose their connection; coming back to the relay means enrolling the server again. If you are connected to the server through its relay hostname, Server Admin says so instead and stops. Connect another way first, such as by the server's local address or through an SSH tunnel to it, since leaving the relay would end that connection.
+2. In **Domain (hostname)**, type your hostname and press Tab. It saves when you leave the field.
+3. Choose **Generate CSR**. The request names the hostname it is for; the private key is made on the server and never leaves it. Each **Generate CSR** replaces the key waiting for a certificate, so install the certificate for the latest request.
+4. Have your certificate authority sign the request. For Let's Encrypt with lego 5 and a DNS challenge, save the request as `request.csr` and run:
+
+   ```bash
+   lego run --accept-tos --path ./lego --csr request.csr --dns manual
+   ```
+
+   lego prints a TXT record to add at `_acme-challenge.<your hostname>`; press Enter once it resolves. The signed chain is written to `./lego/certificates/<your hostname>.crt`.
+5. Paste that whole file into **Signed certificate** and choose **Install certificate**.
+6. Set **Port** to the port your forward reaches.
+
+   Tick **Only this machine connects** when the forwarder runs on this same machine, so the server listens on loopback only. Otherwise it listens for connections from other machines.
+7. Choose **Publish on this domain**, then **Check now** to have the server check the hostname from this machine. Behind a router forward that check can fail while the domain works, where the router does not loop a request to its own public address back inside. The check that counts is `https://<your hostname>` opened from a device on another network, such as a phone off Wi-Fi.
+
+**Renewing.** InternSwarm does not renew a certificate from your own authority. Before it expires (Let's Encrypt's last 90 days), repeat step 1 to open the form, then steps 3 to 5. With lego, reuse the same `./lego` folder and add `--renew-force`:
+
+```bash
+lego run --accept-tos --path ./lego --csr request.csr --dns manual --renew-force
+```
+
+Without it, lego issues nothing for a certificate it does not yet consider due: it prints "Skip renewal" and leaves the old certificate in `./lego/certificates/`. That one belongs to the previous key, and **Install certificate** refuses it. Installing the new certificate takes effect without restarting the server.
+
 ## Configuration UX
 
 Desktop settings separate client reachability from server authority:
