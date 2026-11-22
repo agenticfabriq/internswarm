@@ -16,6 +16,14 @@ Every version is on the [Releases](https://github.com/agenticfabriq/internswarm/
 page: the desktop app for macOS on Apple silicon (`.dmg`), and the server for
 macOS and Linux.
 
+The desktop app also installs with Homebrew:
+
+```bash
+brew install --cask agenticfabriq/tap/internswarm
+```
+
+It updates itself, so `brew outdated` names a new version only with `--greedy`.
+
 Release candidates are marked as pre-releases. The release named
 `candidates` is not a version to install: it holds the list the desktop app
 reads to offer the next release candidate.
